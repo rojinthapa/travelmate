@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}Budget Planner — TravelMate{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="budget-hero">
+  <div class="hero-badge" style="margin-bottom:16px;">💰 Smart Budget Planner</div>
+  <h1>Plan Your Trip <span>Budget</span></h1>
+  <p>Calculate costs, track expenses and convert currencies — all in one place.</p>
+</div>
+
+<div class="section-pad">
+
+  <!-- ROW 1: Calculator + Results -->
+  <div class="grid-auto" style="margin-bottom:0;">
+
+    <!-- Calculator Card -->
+    <div class="card" style="animation-delay:0.05s;">
+      <h3>📊 Quick Calculator</h3>
+
+      <div class="input-group">
+        <label>Destination</label>
+        <input type="text" id="destination" placeholder="e.g. Tokyo, Bali, Paris…">
+      </div>
+
+      <div class="input-group">
+        <label>Duration (days)</label>
+        <input type="number" id="days" value="7" min="1">
+      </div>
+
+      <div class="input-group">
+        <label>Travel Style</label>
+        <div class="style-selector">
+          <div class="style-option" onclick="selectStyle('budget',this)">
+            <span class="style-emoji">🎒</span>
+            <span class="style-name">Budget</span>
+            <span class="style-price">$30–60/day</span>
+          </div>
+          <div class="style-option selected" onclick="selectStyle('mid',this)">
+            <span class="style-emoji">🏨</span>
+            <span class="style-name">Mid-range</span>
+            <span class="style-price">$80–150/day</span>
+          </div>
+          <div class="style-option" onclick="selectStyle('luxury',this)">
+            <span class="style-emoji">✨</span>
+            <span class="style-name">Luxury</span>
+            <span class="style-price">$200–400/day</span>
+          </div>
+        </div>
+        <input type="hidden" id="style" value="mid">
+      </div>
+
+      <button class="btn-primary" style="width:100%;" onclick="calculateBudget()">
+        Calculate Budget →
+      </button>
+    </div>
+
+    <!-- Results Card -->
+    <div class="card budget-result" id="results" style="animation-delay:0.1s;">
+      <h3>📈 Estimated Budget</h3>
+      <div id="budgetContent"></div>
+      <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="askAIBudgetFromCalculator()">
+        Get AI Detailed Breakdown ✨
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Currency Converter -->
+  <div class="card" style="animation-delay:0.15s;">
+    <h3>💱 Currency Converter</h3>
+    <p class="text-muted fs-13" style="margin-bottom:16px;">160+ currencies • Updated daily</p>
+
+    <div class="converter-row">
+      <div style="flex:1;min-width:100px;" class="input-group" style="margin-bottom:0;">
+        <label>Amount</label>
+        <input type="number" id="amount" value="100" placeholder="Amount">
+      </div>
+
+      <div style="flex:2;min-width:140px;" class="input-group" style="margin-bottom:0;">
+        <label>From</label>
+        <select id="fromCurrency"><option>Loading…</option></select>
+      </div>
+
+      <div class="converter-arrow">→</div>
+
+      <div style="flex:2;min-width:140px;" class="input-group" style="margin-bottom:0;">
+        <label>To</label>
+        <select id="toCurrency"><option>Loading…</option></select>
+      </div>
+
+      <div style="padding-top:24px;">
+        <button class="btn-primary" onclick="convertCurrency()">Convert</button>
+      </div>
+    </div>
+
+    <div id="conversionResult"></div>
+    <p id="lastUpdated" style="margin-top:10px;font-size:12px;text-align:center;color:var(--text-light);"></p>
+  </div>
+
+  <!-- Expense Tracker -->
+  <div class="card" style="animation-delay:0.2s;">
+    <h3>📝 Trip Cost Tracker</h3>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <input type="text" id="expenseName" placeholder="Item (e.g. Flight, Hotel)" style="flex:2;min-width:140px;">
+      <input type="number" id="expenseAmount" placeholder="Cost $" style="flex:1;min-width:100px;">
+      <button class="btn-primary" onclick="addExpense()" style="padding:13px 20px;">+ Add</button>
+    </div>
+
+    <div id="expenseList"></div>
+    <div id="totalCost" class="expense-total"></div>
+  </div>
+
+  <!-- Asian Countries Quick Reference -->
+  <div class="card" style="animation-delay:0.25s;">
+    <h3>🌏 Asia Quick Guide</h3>
+    <div class="country-grid" id="countryGrid"></div>
+  </div>
+
+  <!-- Money Saving Tips -->
+  <div class="card" style="animation-delay:0.3s;">
+    <h3>💡 Money-Saving Tips</h3>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <h4>✈️ Flights</h4>
+        <ul>
+          <li>Book 6–8 weeks in advance</li>
+          <li>Fly mid-week (Tue/Wed)</li>
+          <li>Use incognito mode to search</li>
+          <li>Compare 3–5 booking sites</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h4>🏨 Accommodation</h4>
+        <ul>
+          <li>Stay outside city centre</li>
+          <li>Book refundable rates</li>
+          <li>Consider hostels or homestays</li>
+          <li>Look for last-minute deals</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h4>🍽️ Food</h4>
+        <ul>
+          <li>Eat where locals eat</li>
+          <li>Street food is safe & cheap</li>
+          <li>Get breakfast-included stays</li>
+          <li>Visit local markets</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h4>🚇 Transport</h4>
+        <ul>
+          <li>Use public transport passes</li>
+          <li>Walk or bike when possible</li>
+          <li>Book trains early online</li>
+          <li>Consider overnight buses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.section-pad -->
+
+<script src="/static/currency.js"></script>
+
+<script>
+// ─── STYLE SELECTOR ───────────────────────────────────
+function selectStyle(value, el) {
+  document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('style').value = value;
+}
+
+// ─── BUDGET CALCULATOR ────────────────────────────────
+let currentDestination = '', currentDays = 7, currentStyle = 'mid';
+
+function calculateBudget() {
+  const destination = document.getElementById('destination').value.trim() || 'your destination';
+  const days = parseInt(document.getElementById('days').value) || 7;
+  const style = document.getElementById('style').value;
+
+  currentDestination = destination; currentDays = days; currentStyle = style;
+
+  const styles = { budget: { daily:50, name:'🎒 Budget', flight:500 }, mid: { daily:120, name:'🏨 Mid-range', flight:800 }, luxury: { daily:300, name:'✨ Luxury', flight:1500 } };
+  const s = styles[style];
+  const total = s.daily * days;
+  const grand = total + s.flight;
+
+  document.getElementById('budgetContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:8px;">
+      <p style="font-size:13px;color:var(--text-mid);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">📍 ${destination} · ${days} days · ${s.name}</p>
+      <div class="budget-total">$${grand.toLocaleString()}</div>
+      <p style="font-size:13px;color:var(--text-mid);">Estimated total including flights</p>
+    </div>
+    <div class="divider"></div>
+    <div class="budget-line"><span class="label">🏨 Daily expenses × ${days} days</span><span class="amount">$${total.toLocaleString()}</span></div>
+    <div class="budget-line"><span class="label">✈️ Estimated flights</span><span class="amount">$${s.flight.toLocaleString()}</span></div>
+    <div class="budget-line"><span class="label">📅 Per day average</span><span class="amount">$${s.daily}</span></div>
+  `;
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  resultsEl.classList.add('budget-result');
+  // Animate in
+  resultsEl.style.animation = 'none';
+  requestAnimationFrame(() => { resultsEl.style.animation = 'fadeUp 0.4s ease both'; });
+}
+
+function askAIBudgetFromCalculator() {
+  if (!currentDestination || currentDestination === 'your destination') { alert('Please enter a destination first'); return; }
+  const styleText = { budget:'budget', mid:'mid-range', luxury:'luxury' }[currentStyle];
+  const query = `Create a detailed ${currentDays}-day budget breakdown for ${currentDestination} on a ${styleText} budget. Include accommodation, food, transport, activities, and 3 money-saving tips.`;
+  localStorage.setItem('pendingTravelQuery', query);
+  window.location.href = '/chat';
+}
+
+// ─── EXPENSE TRACKER ──────────────────────────────────
+let expenses = JSON.parse(localStorage.getItem('tripExpenses') || '[]');
+
+function renderExpenses() {
+  const list = document.getElementById('expenseList');
+  const total = document.getElementById('totalCost');
+  if (!list || !total) return;
+  let sum = 0;
+  list.innerHTML = '';
+  expenses.forEach((exp, i) => {
+    sum += exp.amount;
+    const el = document.createElement('div');
+    el.className = 'expense-item';
+    el.innerHTML = `
+      <span class="expense-name">${escapeHtml(exp.name)}</span>
+      <span class="expense-amount">$${exp.amount.toFixed(2)}</span>
+      <button class="expense-delete" onclick="removeExpense(${i})">✕</button>
+    `;
+    list.appendChild(el);
+  });
+  total.innerHTML = expenses.length ? `Total: <span>$${sum.toFixed(2)}</span>` : '';
+  localStorage.setItem('tripExpenses', JSON.stringify(expenses));
+}
+
+function addExpense() {
+  const name = document.getElementById('expenseName').value.trim();
+  const amount = parseFloat(document.getElementById('expenseAmount').value);
+  if (!name || isNaN(amount) || amount <= 0) { alert('Please enter a valid name and amount.'); return; }
+  expenses.push({ name, amount });
+  renderExpenses();
+  document.getElementById('expenseName').value = '';
+  document.getElementById('expenseAmount').value = '';
+}
+
+function removeExpense(i) { expenses.splice(i, 1); renderExpenses(); }
+function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+// ─── COUNTRY GRID ─────────────────────────────────────
+const countries = [
+  {flag:'🇯🇵',name:'Japan',currency:'JPY',budget:'¥8,000–15,000/day'},
+  {flag:'🇰🇷',name:'South Korea',currency:'KRW',budget:'₩80,000–150,000/day'},
+  {flag:'🇨🇳',name:'China',currency:'CNY',budget:'¥300–600/day'},
+  {flag:'🇹🇭',name:'Thailand',currency:'THB',budget:'฿1,000–2,500/day'},
+  {flag:'🇻🇳',name:'Vietnam',currency:'VND',budget:'₫500k–1M/day'},
+  {flag:'🇮🇳',name:'India',currency:'INR',budget:'₹2,000–4,000/day'},
+  {flag:'🇸🇬',name:'Singapore',currency:'SGD',budget:'S$100–200/day'},
+  {flag:'🇲🇾',name:'Malaysia',currency:'MYR',budget:'RM150–300/day'},
+  {flag:'🇮🇩',name:'Indonesia',currency:'IDR',budget:'Rp300k–600k/day'},
+  {flag:'🇵🇭',name:'Philippines',currency:'PHP',budget:'₱1,500–3,000/day'},
+  {flag:'🇱🇰',name:'Sri Lanka',currency:'LKR',budget:'Rs5,000–10,000/day'},
+  {flag:'🇳🇵',name:'Nepal',currency:'NPR',budget:'रू3,000–5,000/day'},
+  {flag:'🇧🇩',name:'Bangladesh',currency:'BDT',budget:'৳2,000–4,000/day'},
+  {flag:'🇲🇲',name:'Myanmar',currency:'MMK',budget:'K30,000–50,000/day'},
+  {flag:'🇰🇭',name:'Cambodia',currency:'KHR',budget:'$20–40/day'},
+  {flag:'🇵🇰',name:'Pakistan',currency:'PKR',budget:'₨3,000–6,000/day'},
+];
+
+function renderCountries() {
+  const grid = document.getElementById('countryGrid');
+  if (!grid) return;
+  grid.innerHTML = countries.map((c,i) => `
+    <div class="country-card" style="animation:fadeUp 0.4s ease both ${0.03*i}s;">
+      <span class="flag">${c.flag}</span>
+      <div class="country-name">${c.name}</div>
+      <div class="country-currency">${c.currency}</div>
+      <div class="country-budget">${c.budget}</div>
+    </div>
+  `).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderExpenses();
+  renderCountries();
+});
+</script>
+
+{% endblock %}

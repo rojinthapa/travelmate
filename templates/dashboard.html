@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — TravelMate{% endblock %}
+
+{% block content %}
+
+<div class="chat-wrap">
+
+  <!-- DESTINATION HEADER -->
+  <div style="padding:20px 0 16px;animation:fadeUp 0.4s ease both;">
+    <div class="hero-badge" style="display:inline-flex;margin-bottom:10px;font-size:12px;padding:5px 14px;">
+      📍 Trip Dashboard
+    </div>
+    <h1 id="dashTitle" style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text-dark);">
+      Your Trip
+    </h1>
+    <div id="dashWeatherResult" style="margin-top:8px;font-size:13px;color:var(--text-mid);"></div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div id="dashQuickBtns" class="chat-chips hide-scroll" style="padding:0 0 12px;animation:fadeUp 0.4s ease both 0.05s;"></div>
+
+  <!-- CHAT CARD -->
+  <div class="chat-container" style="animation:scaleIn 0.45s ease both 0.1s;">
+
+    <div class="chat-header">
+      <div class="chat-avatar">🗺️</div>
+      <div class="chat-header-info">
+        <h2>Trip Assistant</h2>
+        <div class="chat-status">
+          <span class="status-dot"></span>
+          Planning your journey
+        </div>
+      </div>
+    </div>
+
+    <div id="messages" class="chat-messages"></div>
+
+    <div class="chat-input-row">
+      <input type="text" id="userInput" class="chat-input"
+        placeholder="Ask about this destination…"
+        onkeypress="if(event.key==='Enter') sendMessage()"
+        autocomplete="off">
+      <button class="send-btn" onclick="sendMessage()">Send ➤</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  if (typeof marked !== 'undefined') marked.setOptions({ breaks: true });
+
+  let sessionId = 'dash_' + Date.now();
+
+  function renderMessage(text, sender) {
+    const msgDiv = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = sender === 'user' ? 'user-message' : 'bot-message';
+    if (sender === 'bot' && typeof marked !== 'undefined') {
+      div.innerHTML = marked.parse(text);
+    } else {
+      div.textContent = text;
+    }
+    msgDiv.appendChild(div);
+    msgDiv.scrollTop = msgDiv.scrollHeight;
+  }
+
+  async function sendMessage(overrideText = null) {
+    const input = document.getElementById('userInput');
+    const text = overrideText || input.value.trim();
+    if (!text) return;
+    renderMessage(text, 'user');
+    if (!overrideText) input.value = '';
+
+    const thinking = document.createElement('div');
+    thinking.className = 'bot-message';
+    thinking.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+    document.getElementById('messages').appendChild(thinking);
+    document.getElementById('messages').scrollTop = 9999;
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, session_id: sessionId })
+      });
+      const data = await resp.json();
+      thinking.remove();
+      renderMessage(data.response || data.error, 'bot');
+    } catch {
+      thinking.remove();
+      renderMessage('⚠️ Connection error. Please try again.', 'bot');
+    }
+  }
+
+  async function fetchWeather(city) {
+    try {
+      const resp = await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=%C:+%t+%w&m`);
+      const text = await resp.text();
+      const clean = text.replace(/\[\d+[;m][^m]*m/g, '').replace(/\[0m/g, '').trim();
+      document.getElementById('dashWeatherResult').innerHTML =
+        `<span style="background:var(--primary-light);color:var(--primary);padding:4px 12px;border-radius:20px;font-weight:600;">🌤 ${clean}</span>`;
+    } catch {
+      document.getElementById('dashWeatherResult').innerHTML = '';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const destination = params.get('destination') || localStorage.getItem('activeDestination');
+
+    if (destination) {
+      const cap = destination.charAt(0).toUpperCase() + destination.slice(1);
+      document.getElementById('dashTitle').textContent = `Trip to ${cap}`;
+      fetchWeather(destination);
+
+      // Build quick buttons
+      document.getElementById('dashQuickBtns').innerHTML = `
+        <button class="quick-btn" onclick="sendMessage('What should I pack for ${destination}?')">🎒 Pack list</button>
+        <button class="quick-btn" onclick="sendMessage('Best cheap eats in ${destination}?')">🍜 Cheap Eats</button>
+        <button class="quick-btn" onclick="sendMessage('How to use public transport in ${destination}?')">🚇 Transport</button>
+        <button class="quick-btn" onclick="sendMessage('Top hidden gems in ${destination}?')">💎 Hidden Gems</button>
+        <button class="quick-btn" onclick="exportChat()">📄 Export</button>
+      `;
+
+      // Auto-start
+      const prompt = `Create a travel guide for ${destination}. Include: top 5 must-see sights, best local restaurants, and practical tips for getting around.`;
+      sendMessage(prompt);
+
+    } else {
+      renderMessage('👋 Welcome! Where would you like to go?', 'bot');
+    }
+  });
+
+  function exportChat() {
+    const msgs = document.getElementById('messages').innerHTML;
+    const win = window.open('', '_blank');
+    win.document.write(`<html><head><style>
+      body{font-family:sans-serif;padding:30px;max-width:700px;margin:0 auto;}
+      .user-message{background:#1A9FE0;color:white;padding:10px 16px;border-radius:14px;display:inline-block;max-width:75%;margin:6px 0;float:right;clear:both;}
+      .bot-message{background:#f1f5f9;padding:10px 16px;border-radius:14px;display:inline-block;max-width:75%;margin:6px 0;clear:both;}
+    </style></head><body><h2>✈️ TravelMate — Trip Plan</h2>${msgs}</body></html>`);
+    win.print();
+  }
+</script>
+
+{% endblock %}

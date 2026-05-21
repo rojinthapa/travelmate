@@ -1,18 +1,15 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 import google.generativeai as genai
-import requests
+import os
 
 app = Flask(__name__)
 
-# YOUR API KEYS
-#For security reason real keys are not posted
-GEMINI_API_KEY = "YOUR_API_KEY"
-SERPAPI_KEY = "YOUR_API_KEY"
 
-# Configure Gemini
+# Key not posted here,refer to live website
+GEMINI_API_KEY = "Your_api_key_here"
+
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Using gemini-2.5-flash-lite from your available models
 model = genai.GenerativeModel(
     'gemini-2.5-flash-lite',
     generation_config={
@@ -25,10 +22,10 @@ model = genai.GenerativeModel(
 3. Be helpful, friendly, and sophisticated."""
 )
 
-# Store conversation history
 conversations = {}
 
-# ROUTES
+# ── Page routes ───────────────────────────────────────────────────────────
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -45,7 +42,25 @@ def chat():
 def budget():
     return render_template('budget.html')
 
-# AI CHAT API
+@app.route('/offline')
+def offline():
+    return render_template('offline.html')
+
+# ── PWA: serve sw.js and manifest.json from root ─────────────────────────
+# Service Workers MUST be served from the root scope to control all pages.
+
+@app.route('/sw.js')
+def service_worker():
+    return send_from_directory(app.root_path, 'sw.js',
+        mimetype='application/javascript')
+
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(app.root_path, 'manifest.json',
+        mimetype='application/manifest+json')
+
+# ── AI Chat API ───────────────────────────────────────────────────────────
+
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     try:
@@ -62,7 +77,7 @@ def api_chat():
         chat_session = model.start_chat(history=conversations[session_id])
         response = chat_session.send_message(user_msg)
 
-        conversations[session_id].append({"role": "user", "parts": [user_msg]})
+        conversations[session_id].append({"role": "user",  "parts": [user_msg]})
         conversations[session_id].append({"role": "model", "parts": [response.text]})
 
         if len(conversations[session_id]) > 20:
@@ -74,59 +89,8 @@ def api_chat():
         print(f"Gemini Error: {e}")
         return jsonify({'error': str(e)}), 500
 
-# FLIGHT SEARCH API (Travelpayouts)
-@app.route('/api/flights', methods=['POST'])
-def search_flights():
-    try:
-        data = request.json
-        origin = data.get('origin', '').upper().strip()
-        destination = data.get('destination', '').upper().strip()
-        date = data.get('date', '').strip()
-
-        if not origin or not destination or not date:
-            return jsonify({'success': False, 'flights': []}), 400
-
-        token = "a35637d89ff0d267031f9ff4fa141351"
-        url = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates"
-
-        params = {
-            "origin": origin,
-            "destination": destination,
-            "departure_date": date,
-            "currency": "usd",
-            "token": token
-        }
-
-        response = requests.get(url, params=params, timeout=15)
-        result = response.json()
-
-        flights = []
-        if result.get('success') and result.get('data'):
-            for key, value in result['data'].items():
-                if isinstance(value, list):
-                    for flight in value:
-                        if flight.get('price'):
-                            flights.append({
-                                'price': flight.get('price'),
-                                'airline': flight.get('airline'),
-                                'flight_number': flight.get('flight_number'),
-                                'transfers': flight.get('transfers', 0)
-                            })
-                    break
-
-        flights.sort(key=lambda x: x['price'])
-        return jsonify({'success': True, 'flights': flights[:5]})
-
-    except Exception as e:
-        return jsonify({'success': False, 'flights': [], 'error': str(e)}), 500
-
-# NEW CHAT
-@app.route('/api/new_chat', methods=['POST'])
-def new_chat():
-    session_id = request.json.get('session_id', 'default')
-    if session_id in conversations:
-        del conversations[session_id]
-    return jsonify({'status': 'ok'})
+# ── Run ───────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
+    

@@ -87,7 +87,7 @@ travel_app/
 
 **1. Clone the repo**
 ```bash
-git clone https://github.com/yourusername/travelmate.git
+git clone https://github.com/rojinthapa/travelmate.git
 cd travelmate
 ```
 

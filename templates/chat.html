@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}AI Assistant — TravelMate{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="chat-wrap">
+
+  <!-- PAGE TITLE -->
+  <div style="padding: 20px 0 16px; animation: fadeUp 0.4s ease both;">
+    <p class="text-muted fs-13 fw-700" style="text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">✨ Powered by AI</p>
+    <h1 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text-dark);">Your Travel Assistant</h1>
+  </div>
+
+  <!-- CHAT CARD -->
+  <div class="chat-container" style="animation: scaleIn 0.45s ease both 0.1s;">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-avatar">✈️</div>
+      <div class="chat-header-info">
+        <h2>TravelMate AI</h2>
+        <div class="chat-status">
+          <span class="status-dot"></span>
+          Online — ready to plan your trip
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="quick-btn" onclick="exportChat()" title="Export">📄</button>
+        <button class="quick-btn" onclick="newChat()" title="New chat">🔄</button>
+      </div>
+    </div>
+
+    <!-- Map (hidden by default) -->
+    <div class="map-wrapper" id="mapWrapper">
+      <button class="map-close-btn" onclick="closeMap()">✕</button>
+      <div id="appMap" style="width:100%;height:180px;background:#e8f0f8;"></div>
+    </div>
+
+    <!-- Quick chips -->
+    <div class="chat-chips hide-scroll">
+      <button class="quick-btn" onclick="triggerNearMe()">📍 Near Me</button>
+      <button class="quick-btn" onclick="sendQuick('Plan a 7-day trip to Japan')">🇯🇵 Japan</button>
+      <button class="quick-btn" onclick="sendQuick('Best beaches in Southeast Asia?')">🏖️ Beaches</button>
+      <button class="quick-btn" onclick="sendQuick('Budget tips for backpacking Europe')">🎒 Budget</button>
+      <button class="quick-btn" onclick="sendQuick('Top 5 street foods in Thailand')">🍜 Food</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="messages" class="chat-messages">
+      <div class="bot-message">
+        👋 <strong>Welcome to TravelMate AI!</strong><br>
+        I can help you plan trips, find destinations, suggest budgets, and more. Where are you dreaming of going? 🌏
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-row">
+      <input
+        type="text"
+        id="userInput"
+        class="chat-input"
+        placeholder="Ask me anything about travel…"
+        onkeypress="if(event.key==='Enter') sendMessage()"
+        autocomplete="off"
+      >
+      <button class="send-btn" onclick="sendMessage()">Send ➤</button>
+    </div>
+
+  </div><!-- /.chat-container -->
+</div>
+
+<script>
+  if (typeof marked !== 'undefined') marked.setOptions({ breaks: true });
+
+  let mapInitialized = false, appMap = null, userMarker = null;
+  let sessionId = localStorage.getItem('travelSession_v9') || 'session_' + Date.now();
+  localStorage.setItem('travelSession_v9', sessionId);
+
+  // ── RENDER ──
+  function renderMessage(text, sender) {
+    const msgDiv = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = sender === 'user' ? 'user-message' : 'bot-message';
+    if (sender === 'bot' && typeof marked !== 'undefined') {
+      div.innerHTML = marked.parse(text);
+    } else {
+      div.textContent = text;
+    }
+    msgDiv.appendChild(div);
+    msgDiv.scrollTop = msgDiv.scrollHeight;
+  }
+
+  function addMessage(text, sender) {
+    renderMessage(text, sender);
+    const history = JSON.parse(localStorage.getItem(`chatData_${sessionId}`) || '[]');
+    history.push({ text, sender });
+    localStorage.setItem(`chatData_${sessionId}`, JSON.stringify(history));
+  }
+
+  // ── SEND ──
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, 'user');
+    input.value = '';
+
+    const thinking = document.createElement('div');
+    thinking.className = 'bot-message';
+    thinking.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+    document.getElementById('messages').appendChild(thinking);
+    document.getElementById('messages').scrollTop = 9999;
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, session_id: sessionId })
+      });
+      const data = await resp.json();
+      thinking.remove();
+      addMessage(data.response || data.error, 'bot');
+    } catch {
+      thinking.remove();
+      addMessage('⚠️ Connection error. Please try again.', 'bot');
+    }
+  }
+
+  function sendQuick(msg) {
+    document.getElementById('userInput').value = msg;
+    sendMessage();
+  }
+
+  // ── MAP ──
+  function initMapIfNeeded() {
+    if (!mapInitialized) {
+      appMap = L.map('appMap').setView([20, 0], 2);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© CARTO' }).addTo(appMap);
+      mapInitialized = true;
+    }
+  }
+
+  function closeMap() {
+    document.getElementById('mapWrapper').style.display = 'none';
+  }
+
+  async function triggerNearMe() {
+    const wrapper = document.getElementById('mapWrapper');
+    wrapper.style.display = 'block';
+    initMapIfNeeded();
+    setTimeout(() => appMap.invalidateSize(), 300);
+    addMessage('Finding my location…', 'user');
+
+    if (!navigator.geolocation) { addMessage('⚠️ Geolocation not supported.', 'bot'); return; }
+
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      appMap.setView([lat, lon], 14);
+      if (userMarker) appMap.removeLayer(userMarker);
+      userMarker = L.marker([lat, lon]).addTo(appMap).bindPopup('<b>📍 You are here</b>').openPopup();
+
+      try {
+        const geo = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const geoData = await geo.json();
+        const city = geoData.address.city || geoData.address.town || geoData.address.village || 'your area';
+
+        const thinking = document.createElement('div');
+        thinking.className = 'bot-message';
+        thinking.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+        document.getElementById('messages').appendChild(thinking);
+        document.getElementById('messages').scrollTop = 9999;
+
+        const aiResp = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `I am currently in ${city}. Please give me 3 top-rated local spots or attractions nearby. Format it cleanly.`, session_id: sessionId })
+        });
+        const aiData = await aiResp.json();
+        thinking.remove();
+        addMessage(aiData.response, 'bot');
+      } catch { addMessage('⚠️ Could not load recommendations.', 'bot'); }
+    }, () => addMessage('⚠️ GPS access denied.', 'bot'));
+  }
+
+  // ── UTILITIES ──
+  function newChat() {
+    if (confirm('Start a fresh conversation?')) {
+      localStorage.removeItem(`chatData_${sessionId}`);
+      location.reload();
+    }
+  }
+
+  function exportChat() {
+    const msgs = document.getElementById('messages').innerHTML;
+    const win = window.open('', '_blank');
+    win.document.write(`<html><head><style>
+      body{font-family:sans-serif;padding:30px;max-width:700px;margin:0 auto;}
+      .user-message{background:#1A9FE0;color:white;padding:10px 16px;border-radius:16px 16px 4px 16px;display:inline-block;max-width:75%;margin:8px 0;float:right;clear:both;}
+      .bot-message{background:#f1f5f9;padding:10px 16px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:75%;margin:8px 0;clear:both;}
+      h2{color:#0D1B2A;margin-bottom:20px;}
+    </style></head><body><h2>✈️ TravelMate AI — Chat Export</h2>${msgs}</body></html>`);
+    win.print();
+  }
+
+  // ── HISTORY ──
+  function loadHistory() {
+    const history = JSON.parse(localStorage.getItem(`chatData_${sessionId}`) || '[]');
+    if (history.length > 0) {
+      document.getElementById('messages').innerHTML = '';
+      history.forEach(m => renderMessage(m.text, m.sender));
+    }
+  }
+
+  // ── PENDING QUERY (from budget page) ──
+  function checkPending() {
+    const q = localStorage.getItem('pendingTravelQuery');
+    if (q) { localStorage.removeItem('pendingTravelQuery'); setTimeout(() => sendQuick(q), 400); }
+  }
+
+  loadHistory();
+  checkPending();
+</script>
+
+{% endblock %}
+

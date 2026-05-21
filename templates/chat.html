@@ -81,7 +81,7 @@
   let sessionId = localStorage.getItem('travelSession_v9') || 'session_' + Date.now();
   localStorage.setItem('travelSession_v9', sessionId);
 
-  // ── RENDER ──
+  // RENDER
   function renderMessage(text, sender) {
     const msgDiv = document.getElementById('messages');
     const div = document.createElement('div');
@@ -102,7 +102,7 @@
     localStorage.setItem(`chatData_${sessionId}`, JSON.stringify(history));
   }
 
-  // ── SEND ──
+  //SEND 
   async function sendMessage() {
     const input = document.getElementById('userInput');
     const text = input.value.trim();
@@ -135,7 +135,7 @@
     sendMessage();
   }
 
-  // ── MAP ──
+  // MAP
   function initMapIfNeeded() {
     if (!mapInitialized) {
       appMap = L.map('appMap').setView([20, 0], 2);
@@ -185,7 +185,7 @@
     }, () => addMessage('⚠️ GPS access denied.', 'bot'));
   }
 
-  // ── UTILITIES ──
+  //UTILITIES
   function newChat() {
     if (confirm('Start a fresh conversation?')) {
       localStorage.removeItem(`chatData_${sessionId}`);
@@ -205,7 +205,7 @@
     win.print();
   }
 
-  // ── HISTORY ──
+  // HISTORY
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(`chatData_${sessionId}`) || '[]');
     if (history.length > 0) {
@@ -214,7 +214,7 @@
     }
   }
 
-  // ── PENDING QUERY (from budget page) ──
+  // PENDING QUERY (from budget page)
   function checkPending() {
     const q = localStorage.getItem('pendingTravelQuery');
     if (q) { localStorage.removeItem('pendingTravelQuery'); setTimeout(() => sendQuick(q), 400); }

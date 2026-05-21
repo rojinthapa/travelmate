@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}TravelMate AI{% endblock %}</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TravelMate">
+    <meta name="theme-color" content="#1a9fe0">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
@@ -54,16 +64,70 @@
 <script>
     (function() {
         const path = window.location.pathname;
-        const map = {'/':'nav-home','/chat':'nav-chat','/budget':'nav-budget'};
+        const map  = {'/':'nav-home','/chat':'nav-chat','/budget':'nav-budget'};
         const bmap = {'/':'bnav-home','/chat':'bnav-chat','/budget':'bnav-budget','/dashboard':'bnav-dash'};
         const top = document.getElementById(map[path]);
         const bot = document.getElementById(bmap[path]);
         if(top) top.classList.add('active');
         if(bot) bot.classList.add('active');
     })();
+
     window.addEventListener('scroll', () => {
         document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
     });
+
+    // ── Service Worker ──────────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(reg => console.log('[TravelMate] SW registered'))
+                .catch(err => console.warn('[TravelMate] SW failed:', err));
+        });
+    }
+
+    // ── Install prompt — fires on every page ────────────────────────────
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallBanner();
+    });
+
+    function showInstallBanner() {
+        if (document.getElementById('pwa-banner')) return;
+        const banner = document.createElement('div');
+        banner.id = 'pwa-banner';
+        banner.innerHTML = `
+            <span>📲 Install TravelMate for offline use</span>
+            <button onclick="installApp()">Install</button>
+            <button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:18px;cursor:pointer;padding:0 4px;">✕</button>
+        `;
+        banner.style.cssText = `
+            position:fixed;bottom:72px;left:12px;right:12px;
+            background:linear-gradient(135deg,#1a9fe0,#0e6fa8);
+            color:white;border-radius:14px;padding:14px 16px;
+            display:flex;align-items:center;gap:10px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.4);
+            z-index:9999;font-size:14px;font-weight:500;
+        `;
+        banner.querySelector('button').style.cssText = `
+            margin-left:auto;background:white;color:#1a9fe0;
+            border:none;border-radius:20px;padding:7px 16px;
+            font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;
+        `;
+        document.body.appendChild(banner);
+    }
+
+    function installApp() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choice => {
+            if (choice.outcome === 'accepted') {
+                document.getElementById('pwa-banner')?.remove();
+            }
+            deferredPrompt = null;
+        });
+    }
 </script>
 </body>
 </html>

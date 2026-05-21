@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}TravelMate AI — Your Smart Travel Companion{% endblock %}
+
+{% block content %}
+
+<!--HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ AI-Powered Travel Planning</div>
+
+  <h1>
+    Explore the World<br>
+    <span>Smarter & Cheaper</span>
+  </h1>
+
+  <p>
+    Your intelligent travel companion — plan trips, manage budgets,
+    and get personalised AI advice for any destination on Earth.
+  </p>
+
+  <div class="hero-search">
+    <input type="text" id="mainSearch" placeholder="Where do you want to go?" autocomplete="off"
+      onkeypress="if(event.key==='Enter') goToDashboard()">
+    <button onclick="goToDashboard()">Explore ✈️</button>
+  </div>
+
+  <div class="popular-chips" style="margin-top:16px;">
+    <span class="chip" onclick="setAndGo('Tokyo')">🇯🇵 Tokyo</span>
+    <span class="chip" onclick="setAndGo('Bali')">🇮🇩 Bali</span>
+    <span class="chip" onclick="setAndGo('Paris')">🇫🇷 Paris</span>
+    <span class="chip" onclick="setAndGo('Singapore')">🇸🇬 Singapore</span>
+    <span class="chip" onclick="setAndGo('Dubai')">🇦🇪 Dubai</span>
+    <span class="chip" onclick="setAndGo('Bangkok')">🇹🇭 Bangkok</span>
+  </div>
+</div>
+
+<!--TRENDING DESTINATIONS -->
+<div class="section">
+  <div class="section-header">
+    <h2 class="section-title">🔥 Trending Destinations</h2>
+    <a href="/chat" class="see-all">Ask AI →</a>
+  </div>
+
+  <div class="dest-scroll">
+    <div class="dest-card" onclick="setAndGo('Tokyo')" style="animation-delay:0.05s;">
+      <div class="dest-card-img">🗼
+        <span class="dest-badge">POPULAR</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Tokyo, Japan</div>
+        <div class="dest-card-sub">Culture · Food · Tech</div>
+        <div class="dest-card-price">from $800 <span>/ person</span></div>
+      </div>
+    </div>
+
+    <div class="dest-card" onclick="setAndGo('Bali')" style="animation-delay:0.1s;">
+      <div class="dest-card-img" style="background:linear-gradient(135deg,#22C55E,#16A34A);">🌴
+        <span class="dest-badge">BEST VALUE</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Bali, Indonesia</div>
+        <div class="dest-card-sub">Beach · Temples · Yoga</div>
+        <div class="dest-card-price">from $600 <span>/ person</span></div>
+      </div>
+    </div>
+
+    <div class="dest-card" onclick="setAndGo('Paris')" style="animation-delay:0.15s;">
+      <div class="dest-card-img" style="background:linear-gradient(135deg,#F59E0B,#D97706);">🗺️
+        <span class="dest-badge">CLASSIC</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Paris, France</div>
+        <div class="dest-card-sub">Art · Fashion · Romance</div>
+        <div class="dest-card-price">from $1,100 <span>/ person</span></div>
+      </div>
+    </div>
+
+    <div class="dest-card" onclick="setAndGo('Singapore')" style="animation-delay:0.2s;">
+      <div class="dest-card-img" style="background:linear-gradient(135deg,#EF4444,#DC2626);">🌆
+        <span class="dest-badge">TOP RATED</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Singapore</div>
+        <div class="dest-card-sub">Food · Shopping · Skyline</div>
+        <div class="dest-card-price">from $950 <span>/ person</span></div>
+      </div>
+    </div>
+
+    <div class="dest-card" onclick="setAndGo('Kyoto')" style="animation-delay:0.25s;">
+      <div class="dest-card-img" style="background:linear-gradient(135deg,#EC4899,#BE185D);">🌸
+        <span class="dest-badge">SEASONAL</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Kyoto, Japan</div>
+        <div class="dest-card-sub">Temples · Gardens · History</div>
+        <div class="dest-card-price">from $750 <span>/ person</span></div>
+      </div>
+    </div>
+
+    <div class="dest-card" onclick="setAndGo('Dubai')" style="animation-delay:0.3s;">
+      <div class="dest-card-img" style="background:linear-gradient(135deg,#F5C542,#D97706);">🏙️
+        <span class="dest-badge">LUXURY</span>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-name">Dubai, UAE</div>
+        <div class="dest-card-sub">Luxury · Desert · Shopping</div>
+        <div class="dest-card-price">from $1,200 <span>/ person</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE CARDS -->
+<div class="section" style="padding-top:0;">
+  <div class="section-header">
+    <h2 class="section-title">🛠 What Can I Help With?</h2>
+  </div>
+
+  <div class="feature-grid">
+    <a href="/chat" class="feature-card">
+      <div class="feature-icon">✨</div>
+      <h3>AI Trip Planner</h3>
+      <p>Get personalised itineraries, packing lists and local tips from your AI travel companion.</p>
+    </a>
+
+    <a href="/flights" class="feature-card">
+      <div class="feature-icon" style="background:rgba(99,102,241,0.12);">✈️</div>
+      <h3>Flight Search</h3>
+      <p>Search real-time flight prices or jump to Google Flights, Skyscanner and Kayak instantly.</p>
+    </a>
+
+    <a href="/budget" class="feature-card">
+      <div class="feature-icon" style="background:rgba(245,197,66,0.15);">💰</div>
+      <h3>Budget Calculator</h3>
+      <p>Calculate trip costs, track expenses and convert 160+ currencies instantly.</p>
+    </a>
+
+    <a href="/chat" class="feature-card" onclick="openChatWithMsg('What are the best street foods to try around the world?')">
+      <div class="feature-icon" style="background:rgba(34,197,94,0.12);">🍜</div>
+      <h3>Food & Culture</h3>
+      <p>Discover must-try local dishes, restaurant picks and cultural dining etiquette.</p>
+    </a>
+
+    <a href="/chat" class="feature-card" onclick="openChatWithMsg('What documents do I need to travel abroad from the UK?')">
+      <div class="feature-icon" style="background:rgba(239,68,68,0.1);">📋</div>
+      <h3>Travel Essentials</h3>
+      <p>Visa info, travel documents, health tips and safety advice for every destination.</p>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════ CTA STRIP ═══════════════ -->
+<div class="section" style="padding-top:0;padding-bottom:40px;">
+  <div style="
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a3a5c 100%);
+    border-radius: var(--r-xl);
+    padding: 40px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both 0.3s;
+  ">
+    <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(26,159,224,0.2),transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-40px;left:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,197,66,0.15),transparent 70%);pointer-events:none;"></div>
+
+    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:12px;position:relative;z-index:1;">Start Planning Now</p>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:800;color:white;margin-bottom:12px;position:relative;z-index:1;line-height:1.2;">
+      Your next adventure<br>is one prompt away ✈️
+    </h2>
+    <p style="font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:28px;position:relative;z-index:1;">
+      Chat with TravelMate AI — no signup needed.
+    </p>
+    <a href="/chat" style="
+      display:inline-block;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:white; text-decoration:none;
+      padding:15px 36px;
+      border-radius:var(--r-pill);
+      font-family:'Syne',sans-serif;
+      font-weight:700; font-size:15px;
+      box-shadow:0 8px 24px rgba(26,159,224,0.4);
+      transition:var(--ease);
+      position:relative;z-index:1;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      Chat with AI →
+    </a>
+  </div>
+</div>
+
+<script>
+  function goToDashboard() {
+    const city = document.getElementById('mainSearch').value.trim();
+    if (!city) { document.getElementById('mainSearch').focus(); return; }
+    localStorage.setItem('activeDestination', city);
+    window.location.href = `/dashboard?destination=${encodeURIComponent(city)}`;
+  }
+
+  function setAndGo(city) {
+    localStorage.setItem('activeDestination', city);
+    window.location.href = `/dashboard?destination=${encodeURIComponent(city)}`;
+  }
+
+  function openChatWithMsg(msg) {
+    event.preventDefault();
+    localStorage.setItem('pendingTravelQuery', msg);
+    window.location.href = '/chat';
+  }
+</script>
+
+{% endblock %}

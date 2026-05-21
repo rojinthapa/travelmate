@@ -167,14 +167,14 @@
 <script src="/static/currency.js"></script>
 
 <script>
-// ─── STYLE SELECTOR ───────────────────────────────────
+// STYLE SELECTOR
 function selectStyle(value, el) {
   document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('style').value = value;
 }
 
-// ─── BUDGET CALCULATOR ────────────────────────────────
+// BUDGET CALCULATOR
 let currentDestination = '', currentDays = 7, currentStyle = 'mid';
 
 function calculateBudget() {
@@ -217,7 +217,7 @@ function askAIBudgetFromCalculator() {
   window.location.href = '/chat';
 }
 
-// ─── EXPENSE TRACKER ──────────────────────────────────
+// EXPENSE TRACKER
 let expenses = JSON.parse(localStorage.getItem('tripExpenses') || '[]');
 
 function renderExpenses() {
@@ -254,7 +254,7 @@ function addExpense() {
 function removeExpense(i) { expenses.splice(i, 1); renderExpenses(); }
 function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-// ─── COUNTRY GRID ─────────────────────────────────────
+//COUNTRY GRID
 const countries = [
   {flag:'🇯🇵',name:'Japan',currency:'JPY',budget:'¥8,000–15,000/day'},
   {flag:'🇰🇷',name:'South Korea',currency:'KRW',budget:'₩80,000–150,000/day'},

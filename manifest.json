@@ -1,0 +1,40 @@
+{
+  "name": "TravelMate AI",
+  "short_name": "TravelMate",
+  "description": "Your intelligent travel companion — plan trips, manage budgets, and get AI advice.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1628",
+  "theme_color": "#1a9fe0",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["travel", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "AI Chat",
+      "short_name": "Chat",
+      "url": "/chat",
+      "description": "Chat with TravelMate AI"
+    },
+    {
+      "name": "Budget Calculator",
+      "short_name": "Budget",
+      "url": "/budget",
+      "description": "Plan your travel budget"
+    }
+  ]
+}

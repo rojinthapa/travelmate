@@ -73,12 +73,13 @@ travel_app/
 │   └── dashboard.html      # Destination dashboard
 │
 └── static/
-    ├── style.css           # All styles
+    ├── style.css         # All styles
+    ├── marked.min.js.    # Text render JS
     ├── script.js           # Main JS
     ├── currency.js         # Currency converter (offline-ready)
     └── icons/
-        ├── icon-192.png    # PWA icon
-        └── icon-512.png    # PWA icon
+        ├── icon1.png    # PWA icon
+        └── icon2.png    # PWA icon
 ```
 
 ---

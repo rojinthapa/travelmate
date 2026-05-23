@@ -1,12 +1,7 @@
 // TravelMate — Service Worker (sw.js)
 // Serve from root: Flask route @app.route('/sw.js')
-// Strategy:
-//   • App shell (HTML/CSS/JS/fonts) → Cache First
-//   • AI Chat API (/api/chat)       → Network Only (needs Gemini)
-//   • Weather (wttr.in)             → Network with offline fallback
-//   • Currency API (jsdelivr)       → Network with offline fallback
 
-const CACHE_NAME   = 'travelmate-v1';
+const CACHE_NAME   = 'travelmate-v4';
 const OFFLINE_PAGE = '/offline';   // served by Flask
 
 // Everything that makes the app usable without internet
@@ -21,7 +16,7 @@ const APP_SHELL = [
   '/static/marked.min.js',
 ];
 
-//Install: pre-cache the app shell
+// Install: pre-cache the app shell
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -32,7 +27,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: delete old caches
+//Activate: delete old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>

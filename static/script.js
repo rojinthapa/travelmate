@@ -1,6 +1,4 @@
-// ============================================
 // CHAT FUNCTIONALITY & STORAGE
-// ============================================
 
 let sessionId = localStorage.getItem('chatSessionId') || 'session_' + Date.now();
 localStorage.setItem('chatSessionId', sessionId);
@@ -111,9 +109,8 @@ function sendQuick(message) {
     }
 }
 
-// ============================================
+
 // DASHBOARD NAVIGATION & INITIALIZATION
-// ============================================
 
 function goToDashboard() {
     const searchInput = document.getElementById('mainSearch');
@@ -187,9 +184,7 @@ async function fetchDashboardWeather(city) {
 }
 
 
-// ============================================
 // BUDGET CALCULATOR & EXPENSE TRACKER
-// ============================================
 
 let currentDestination = '';
 let currentDays = 7;
@@ -299,10 +294,8 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ============================================
-// UTILITIES
-// ============================================
 
+// UTILITIES
 function exportAsPDF() {
     const messagesDiv = document.getElementById('messages');
     if (!messagesDiv || messagesDiv.children.length === 0) {
@@ -330,9 +323,8 @@ function checkPendingQuery() {
     }
 }
 
-// ============================================
+
 // PAGE INITIALIZATION
-// ============================================
 document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname === '/dashboard') {
         initDashboard();

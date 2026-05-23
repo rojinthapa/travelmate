@@ -1,4 +1,3 @@
-// ============================================================
 // TravelMate — Service Worker (sw.js)
 // Serve from root: Flask route @app.route('/sw.js')
 // Strategy:
@@ -6,7 +5,6 @@
 //   • AI Chat API (/api/chat)       → Network Only (needs Gemini)
 //   • Weather (wttr.in)             → Network with offline fallback
 //   • Currency API (jsdelivr)       → Network with offline fallback
-// ============================================================
 
 const CACHE_NAME   = 'travelmate-v1';
 const OFFLINE_PAGE = '/offline';   // served by Flask
@@ -23,7 +21,7 @@ const APP_SHELL = [
   '/static/marked.min.js',
 ];
 
-// ── Install: pre-cache the app shell ──────────────────────────────────────
+//Install: pre-cache the app shell
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -34,7 +32,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// ── Activate: delete old caches ───────────────────────────────────────────
+// Activate: delete old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -49,7 +47,7 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// ── Fetch: route-based strategy ───────────────────────────────────────────
+//Fetch: route-based strategy
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);

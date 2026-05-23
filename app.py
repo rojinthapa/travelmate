@@ -24,7 +24,7 @@ model = genai.GenerativeModel(
 
 conversations = {}
 
-# ── Page routes ───────────────────────────────────────────────────────────
+// Page routes
 
 @app.route('/')
 def index():
@@ -46,9 +46,6 @@ def budget():
 def offline():
     return render_template('offline.html')
 
-# ── PWA: serve sw.js and manifest.json from root ─────────────────────────
-# Service Workers MUST be served from the root scope to control all pages.
-
 @app.route('/sw.js')
 def service_worker():
     return send_from_directory(app.root_path, 'sw.js',
@@ -59,7 +56,7 @@ def manifest():
     return send_from_directory(app.root_path, 'manifest.json',
         mimetype='application/manifest+json')
 
-# ── AI Chat API ───────────────────────────────────────────────────────────
+//AI Chat API
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
@@ -88,8 +85,6 @@ def api_chat():
     except Exception as e:
         print(f"Gemini Error: {e}")
         return jsonify({'error': str(e)}), 500
-
-# ── Run ───────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)

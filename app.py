@@ -4,8 +4,7 @@ import os
 
 app = Flask(__name__)
 
-
-# Key not posted here,refer to live website
+# Key not posted here, refer to live website
 GEMINI_API_KEY = "Your_api_key_here"
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -24,7 +23,7 @@ model = genai.GenerativeModel(
 
 conversations = {}
 
-// Page routes
+# Page routes
 
 @app.route('/')
 def index():
@@ -42,10 +41,6 @@ def chat():
 def budget():
     return render_template('budget.html')
 
-@app.route('/offline')
-def offline():
-    return render_template('offline.html')
-
 @app.route('/sw.js')
 def service_worker():
     return send_from_directory(app.root_path, 'sw.js',
@@ -56,7 +51,7 @@ def manifest():
     return send_from_directory(app.root_path, 'manifest.json',
         mimetype='application/manifest+json')
 
-//AI Chat API
+# AI Chat API
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():

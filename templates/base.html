@@ -76,7 +76,7 @@
         document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
     });
 
-    // ── Service Worker ──────────────────────────────────────────────────
+    // Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js', { scope: '/' })
@@ -85,7 +85,7 @@
         });
     }
 
-    // ── Install prompt — fires on every page ────────────────────────────
+    //Install prompt -fires on every page
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();

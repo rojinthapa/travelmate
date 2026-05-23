@@ -2,8 +2,8 @@
 
 // CSS VARIABLEs
 :root {
-  /* Brand */
-  --primary:       #1A9FE0;   /* sky blue — main CTA */
+  
+  --primary:       #1A9FE0;   
   --primary-dark:  #1480BE;
   --primary-light: rgba(26,159,224,0.12);
   --gold:          #F5C542;
@@ -11,48 +11,46 @@
   --success:       #22C55E;
   --danger:        #EF4444;
 
-  /* Backgrounds */
-  --bg-app:        #F0F4F8;   /* light page bg */
+  
+  --bg-app:        #F0F4F8;   
   --bg-card:       #FFFFFF;
   --bg-input:      #F7F9FB;
-  --bg-dark:       #0D1B2A;   /* dark hero sections */
+  --bg-dark:       #0D1B2A;   
   --bg-dark2:      #152535;
 
-  /* Text */
+  
   --text-dark:     #0D1B2A;
   --text-mid:      #4A6080;
   --text-light:    #8FA3B8;
   --text-white:    #FFFFFF;
 
-  /* Borders */
+  
   --border:        rgba(0,0,0,0.07);
   --border-focus:  rgba(26,159,224,0.5);
 
-  /* Shadows */
+  
   --shadow-sm:  0 2px 8px rgba(0,0,0,0.06);
   --shadow-md:  0 6px 24px rgba(0,0,0,0.10);
   --shadow-lg:  0 16px 48px rgba(0,0,0,0.14);
   --shadow-card: 0 4px 20px rgba(13,27,42,0.08);
   --shadow-primary: 0 8px 24px rgba(26,159,224,0.35);
 
-  /* Radii */
+  
   --r-sm:  10px;
   --r-md:  16px;
   --r-lg:  22px;
   --r-xl:  32px;
   --r-pill: 999px;
 
-  /* Type */
+  
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
   --font-display: 'Syne', sans-serif;
 
-  /* Transitions */
+  
   --ease: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ------------------------------------------------
-   RESET
-   ------------------------------------------------ */
+// RESET
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
 html, body { max-width:100vw; overflow-x:hidden; }
@@ -65,18 +63,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ------------------------------------------------
-   APP SHELL
-   ------------------------------------------------ */
+// APP SHELL
 .app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* ------------------------------------------------
-   NAVBAR
-   ------------------------------------------------ */
+// NAVBAR
 .navbar {
   position: sticky;
   top: 0;
@@ -144,17 +138,12 @@ body {
   background: var(--primary-light);
 }
 
-/* ------------------------------------------------
-   PAGE CONTENT
-   ------------------------------------------------ */
+// PAGE CONTENT
 .page-content {
   flex: 1;
-  padding-bottom: 80px; /* space for bottom nav */
+  padding-bottom: 80px; 
 }
 
-/* ------------------------------------------------
-   BOTTOM NAV (mobile)
-   ------------------------------------------------ */
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -188,9 +177,6 @@ body {
 .bnav-item.active svg { stroke: var(--primary); }
 .bnav-item svg { transition: var(--ease); }
 
-/* ------------------------------------------------
-   HERO SECTION (Home page)
-   ------------------------------------------------ */
 .hero {
   background: linear-gradient(160deg, var(--bg-dark) 0%, var(--bg-dark2) 100%);
   padding: 56px 24px 48px;
@@ -199,7 +185,6 @@ body {
   overflow: hidden;
 }
 
-/* Animated blobs */
 .hero::before {
   content: '';
   position: absolute;
@@ -270,7 +255,6 @@ body {
   animation: fadeUp 0.5s ease both 0.1s;
 }
 
-/* Hero search */
 .hero-search {
   display: flex;
   max-width: 540px;
@@ -320,7 +304,6 @@ body {
   box-shadow: 0 10px 28px rgba(26,159,224,0.5);
 }
 
-/* Popular destinations chips */
 .popular-chips {
   display: flex; flex-wrap: wrap; gap: 8px;
   justify-content: center;
@@ -346,9 +329,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* ------------------------------------------------
-   DESTINATION CARDS (Home explore section)
-   ------------------------------------------------ */
 .section {
   padding: 32px 24px;
   max-width: 1100px;
@@ -435,9 +415,7 @@ body {
 .dest-card-price { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--primary); }
 .dest-card-price span { font-size: 12px; font-weight: 400; color: var(--text-light); }
 
-/* ------------------------------------------------
-   FEATURE CARDS GRID
-   ------------------------------------------------ */
+// FEATURE CARDS GRID
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -484,9 +462,6 @@ body {
 .feature-card h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
 .feature-card p  { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
 
-/* ------------------------------------------------
-   GLASS CARD (dark variant for certain sections)
-   ------------------------------------------------ */
 .card {
   background: var(--bg-card);
   border-radius: var(--r-lg);
@@ -514,9 +489,7 @@ body {
   display: flex; align-items: center; gap: 8px;
 }
 
-/* ------------------------------------------------
-   FORM INPUTS
-   ------------------------------------------------ */
+// FORM INPUTS
 .input-group { margin-bottom: 16px; }
 
 .input-group label {
@@ -555,9 +528,7 @@ select:focus {
 input::placeholder { color: var(--text-light); }
 select option { background: white; color: var(--text-dark); }
 
-/* ------------------------------------------------
-   BUTTONS
-   ------------------------------------------------ */
+// BUTTONS
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
@@ -642,9 +613,7 @@ select option { background: white; color: var(--text-dark); }
   transform: translateY(-1px);
 }
 
-/* ------------------------------------------------
-   CHAT UI
-   ------------------------------------------------ */
+// CHAT UI
 .chat-wrap {
   max-width: 800px;
   margin: 0 auto;
@@ -725,7 +694,6 @@ select option { background: white; color: var(--text-dark); }
 .chat-messages::-webkit-scrollbar-track { background: transparent; }
 .chat-messages::-webkit-scrollbar-thumb { background: #D0DCE8; border-radius: 4px; }
 
-/* User bubble */
 .user-message {
   align-self: flex-end;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -739,7 +707,6 @@ select option { background: white; color: var(--text-dark); }
   word-wrap: break-word;
 }
 
-/* Bot bubble */
 .bot-message {
   align-self: flex-start;
   background: white;
@@ -757,7 +724,6 @@ select option { background: white; color: var(--text-dark); }
 @keyframes bubbleRight { from { opacity:0; transform:translateX(16px) scale(0.96); } to { opacity:1; transform:none; } }
 @keyframes bubbleLeft  { from { opacity:0; transform:translateX(-16px) scale(0.96); } to { opacity:1; transform:none; } }
 
-/* Markdown inside bot */
 .bot-message p { margin-bottom: 8px; }
 .bot-message p:last-child { margin-bottom: 0; }
 .bot-message ul, .bot-message ol { padding-left: 18px; margin: 6px 0; }
@@ -765,7 +731,6 @@ select option { background: white; color: var(--text-dark); }
 .bot-message strong { color: var(--primary); font-weight: 600; }
 .bot-message h1,.bot-message h2,.bot-message h3 { font-family: var(--font-display); color: var(--text-dark); margin: 10px 0 6px; font-size: 15px; }
 
-/* Typing indicator */
 .typing-indicator { display: flex; gap: 5px; align-items: center; padding: 2px 0; }
 .typing-indicator span {
   width: 8px; height: 8px;
@@ -781,7 +746,6 @@ select option { background: white; color: var(--text-dark); }
   30%          { transform: translateY(-7px); opacity: 1; }
 }
 
-/* Quick action chips in chat */
 .chat-chips {
   display: flex; gap: 8px;
   overflow-x: auto; padding: 12px 20px 4px;
@@ -789,7 +753,6 @@ select option { background: white; color: var(--text-dark); }
 }
 .chat-chips::-webkit-scrollbar { display: none; }
 
-/* Input row */
 .chat-input-row {
   display: flex; gap: 10px; align-items: center;
   padding: 14px 20px;
@@ -818,7 +781,6 @@ select option { background: white; color: var(--text-dark); }
 
 .chat-input::placeholder { color: var(--text-light); }
 
-/* Map wrapper */
 .map-wrapper {
   position: relative;
   margin: 0 20px 12px;
@@ -842,9 +804,7 @@ select option { background: white; color: var(--text-dark); }
 
 .map-close-btn:hover { background: #FFE4E6; color: var(--danger); }
 
-/* ------------------------------------------------
-   BUDGET PAGE
-   ------------------------------------------------ */
+// BUDGET PAGE
 .budget-hero {
   background: linear-gradient(160deg, var(--bg-dark), var(--bg-dark2));
   padding: 40px 24px 48px;
@@ -881,7 +841,6 @@ select option { background: white; color: var(--text-dark); }
 
 .budget-hero h1 span { color: var(--gold); }
 
-/* Travel style selector */
 .style-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -912,7 +871,6 @@ select option { background: white; color: var(--text-dark); }
 .style-name  { font-size: 13px; font-weight: 700; color: var(--text-dark); display: block; }
 .style-price { font-size: 11px; color: var(--text-light); }
 
-/* Budget result */
 .budget-result {
   display: none;
   animation: fadeUp 0.4s ease both;
@@ -938,7 +896,6 @@ select option { background: white; color: var(--text-dark); }
 .budget-line .label { color: var(--text-dark); font-weight: 500; }
 .budget-line .amount { font-family: var(--font-display); font-weight: 700; color: var(--primary); }
 
-/* Expense tracker */
 .expense-item {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 14px;
@@ -978,7 +935,6 @@ select option { background: white; color: var(--text-dark); }
 
 .expense-total span { color: var(--primary); }
 
-/* Currency converter */
 .converter-row {
   display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
 }
@@ -1014,7 +970,6 @@ select option { background: white; color: var(--text-dark); }
   font-size: 13px; color: var(--text-mid); margin-top: 4px;
 }
 
-/* Country grid */
 .country-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1042,7 +997,6 @@ select option { background: white; color: var(--text-dark); }
 .country-currency { font-size: 12px; color: var(--text-light); margin-top: 2px; }
 .country-budget { font-size: 12px; color: var(--primary); margin-top: 4px; font-weight: 600; }
 
-/* Tips */
 .tips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1068,9 +1022,7 @@ select option { background: white; color: var(--text-dark); }
 .tip-card li::before { content: '→'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
 .tip-card li:last-child { border-bottom: none; }
 
-/* ------------------------------------------------
-   ANIMATIONS
-   ------------------------------------------------ */
+// ANIMATIONS
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1086,15 +1038,11 @@ select option { background: white; color: var(--text-dark); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* ------------------------------------------------
-   GRID HELPERS
-   ------------------------------------------------ */
+// GRID HELPERS
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 
-/* ------------------------------------------------
-   UTILITY
-   ------------------------------------------------ */
+// UTILITY
 .section-pad { padding: 24px; max-width: 1100px; margin: 0 auto; }
 .text-center { text-align: center; }
 .text-primary { color: var(--primary); }
@@ -1109,17 +1057,13 @@ select option { background: white; color: var(--text-dark); }
 .fs-13  { font-size: 13px; }
 .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
-/* ------------------------------------------------
-   SCROLLBAR
-   ------------------------------------------------ */
+// SCROLLBAR
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #D0DCE8; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-/* ------------------------------------------------
-   MOBILE
-   ------------------------------------------------ */
+// MOBILE
 @media (max-width: 768px) {
   .navbar { padding: 0 16px; }
   .nav-links { gap: 2px; }

@@ -74,7 +74,6 @@ travel_app/
 │
 └── static/
     ├── style.css         # All styles
-    ├── marked.min.js.    # Text render JS
     ├── script.js           # Main JS
     ├── currency.js         # Currency converter (offline-ready)
     └── icons/
